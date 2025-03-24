@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
-
-
+import { useState, useMemo, useEffect } from "react";
 
 function App() {
   const [politicians, setPoliticians] = useState([]);
+  const [inputValue, setInputValue] = useState('');
 
   const getPoliticians = async() => {
     try {
@@ -17,17 +16,41 @@ function App() {
 
   useEffect(() => {
     getPoliticians();
-  }, []);
+  }, []) 
+
+  const fiteredPoli = useMemo(() => {
+    return politicians.filter(politician => {
+      const {name, biography} = politician;
+      const keys = [name, biography];
+      const isWordPresent = keys.some(key => key.toLowerCase().includes(inputValue.toLowerCase()))
+      if(isWordPresent) {
+        return politician
+      }       
+    });
+  }, [politicians, inputValue]);
 
   
   return (
     <main>
+
       <section className="container">
         <h1>POLITICIANS</h1>
+          <div>
+            <input 
+              type="text"
+              value={inputValue}
+              placeholder="Cerca un politico"
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+          </div>
+      </section>  
+
+      <section className="container">
         <div className="poli-list">
-          {politicians.map((politician, i) => (
-            <div className="col"> 
-              <div className="card" key={i}>
+
+          {fiteredPoli.map((politician, i) => (
+            <div className="col" key={i}> 
+              <div className="card">
                 <div>
                   <img src={politician.image} alt={politician.name} />
                 </div>
@@ -39,8 +62,10 @@ function App() {
               </div>
             </div>
           ))}
+
         </div>
       </section>
+      
     </main>
   );
 };
