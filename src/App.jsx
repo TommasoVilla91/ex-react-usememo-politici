@@ -1,3 +1,4 @@
+import Card from "./components/card";
 import { useState, useMemo, useEffect } from "react";
 
 function App() {
@@ -16,16 +17,16 @@ function App() {
 
   useEffect(() => {
     getPoliticians();
-  }, []) 
+  }, []);
 
   const fiteredPoli = useMemo(() => {
     return politicians.filter(politician => {
       const {name, biography} = politician;
       const keys = [name, biography];
-      const isWordPresent = keys.some(key => key.toLowerCase().includes(inputValue.toLowerCase()))
+      const isWordPresent = keys.some(key => key.toLowerCase().includes(inputValue.toLowerCase()));
       if(isWordPresent) {
-        return politician
-      }       
+        return politician;
+      };
     });
   }, [politicians, inputValue]);
 
@@ -49,20 +50,14 @@ function App() {
         <div className="poli-list">
 
           {fiteredPoli.map((politician, i) => (
-            <div className="col" key={i}> 
-              <div className="card">
-                <div>
-                  <img src={politician.image} alt={politician.name} />
-                </div>
-                <div className="card-text">
-                  <h3>{politician.name}</h3>
-                  <h5>{politician.position}</h5>
-                  <p>{politician.biography}</p>
-                </div>
-              </div>
-            </div>
+            <Card 
+              key={i}
+              nome={politician.name}
+              immagine={politician.image}
+              posizione={politician.position}
+              bio={politician.biography}
+            />
           ))}
-
         </div>
       </section>
       
