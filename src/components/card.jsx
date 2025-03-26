@@ -1,7 +1,6 @@
 import React from "react";
 
 const Card = React.memo(({nome, immagine, posizione, bio}) => {
-    console.log("Poli Render:", nome);
     
     return (
         <div className="col">

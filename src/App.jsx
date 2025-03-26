@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 function App() {
   const [politicians, setPoliticians] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [selectedPos, setSelectedPos] = useState('');
 
   const getPoliticians = async() => {
     try {
@@ -19,16 +20,29 @@ function App() {
     getPoliticians();
   }, []);
 
+  //// BONUS (punto 3 corretto con correzione)
+  const positions = useMemo(() => {
+    let allPositions = [];
+    politicians.forEach(politician => {
+      const isPosAdded = allPositions.some(currPos => currPos === politician.position)
+      if(!isPosAdded) {
+        allPositions.push(politician.position);
+      };
+    });
+    return allPositions;
+  }, [politicians]);
+
   const fiteredPoli = useMemo(() => {
     return politicians.filter(politician => {
       const {name, biography} = politician;
       const keys = [name, biography];
       const isWordPresent = keys.some(key => key.toLowerCase().includes(inputValue.toLowerCase()));
-      if(isWordPresent) {
+      const isPosValid = selectedPos === "" || selectedPos === politician.position;
+      if(isWordPresent && isPosValid) {
         return politician;
       };
     });
-  }, [politicians, inputValue]);
+  }, [politicians, inputValue, selectedPos]);
 
   
   return (
@@ -36,6 +50,17 @@ function App() {
 
       <section className="container">
         <h1>POLITICIANS</h1>
+          <div>
+            <select 
+              value={selectedPos} 
+              onChange={(e) => setSelectedPos(e.target.value)}
+            >
+              <option value="">Cerca per carica politica</option>
+              {positions.map((pos, i) => (
+                <option value={pos} key={i}>{pos}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <input 
               type="text"
